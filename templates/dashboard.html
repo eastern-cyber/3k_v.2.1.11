@@ -122,17 +122,34 @@
     function loadUserData() {
         const userData = localStorage.getItem('user') || localStorage.getItem('user_data');
         
+        console.log('Loading user data from storage:', userData);
+        
         if (userData) {
             try {
                 const user = JSON.parse(userData);
+                
+                // Set email
                 document.getElementById('userEmail').textContent = user.email || 'Not set';
+                
+                // Set name
                 document.getElementById('userName').textContent = user.name || 'Not set';
-                document.getElementById('userId').textContent = user.user_id || 'Not set';
-                document.getElementById('tokenId').textContent = user.token_id || 'Not set';
-                console.log('User loaded:', user);
+                
+                // Set wallet address (user_id)
+                document.getElementById('userId').textContent = user.user_id || user.wallet_address || 'Not set';
+                
+                // Set token ID - check multiple possible fields
+                const tokenId = user.token_id || user.tokenId || user.token || 'Not set';
+                document.getElementById('tokenId').textContent = tokenId;
+                
+                console.log('✅ User loaded:', user);
+                console.log('Available fields:', Object.keys(user));
+                
             } catch (e) {
                 console.error('Error parsing user data:', e);
+                showMessage('Error loading user data', 'error');
             }
+        } else {
+            showMessage('No user data found.', 'error');
         }
     }
 
