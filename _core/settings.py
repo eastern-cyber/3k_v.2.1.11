@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'a_users',
     
     # Third party
-    'django_browser_reload',
     'django_htmx',
 ]
 

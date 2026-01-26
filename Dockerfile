@@ -6,7 +6,6 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
@@ -16,5 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Run debug script
-CMD ./debug.sh
+CMD python manage.py migrate --noinput && \
+    gunicorn _core.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120

@@ -24,3 +24,4 @@ gunicorn==21.2.0
 
 # Environment Variables
 python-decouple==3.8
+django-browser-reload==1.12.0
