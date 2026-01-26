@@ -1,6 +1,6 @@
 [build]
-builder = "nixpacks"
-nixpacksConfig = "./nixpacks.toml"
+builder = "dockerfile"
+dockerfilePath = "./Dockerfile"
 
 [deploy]
 startCommand = "python manage.py migrate --noinput && gunicorn _core.wsgi:application"
@@ -8,3 +8,7 @@ startCommand = "python manage.py migrate --noinput && gunicorn _core.wsgi:applic
 [[services]]
 name = "3k_v.2.1.10"
 type = "web"
+minInstances = 1
+
+[variables]
+PORT = "8000"
