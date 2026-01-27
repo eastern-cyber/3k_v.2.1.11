@@ -199,7 +199,6 @@ import sys
 OPTIONAL_APPS = [
     'django_browser_reload',
     'django_htmx',
-    'debug_toolbar',
 ]
 
 # Remove any optional apps that aren't installed
