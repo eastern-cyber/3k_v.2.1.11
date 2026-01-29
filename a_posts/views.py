@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from .forms import PostForm
 from .models import Post
@@ -60,3 +60,15 @@ def upload_view(request):
     if request.htmx:
         return render(request, 'a_posts/partials/_upload.html', context)
     return render(request, 'a_posts/upload.html', context)
+
+
+def post_page_view(request, pk=None):
+    if not pk:
+        return redirect('home')
+    
+    post = get_object_or_404(Post, id=pk)
+    
+    context = {
+                'post': post,
+    }
+    return render(request, 'a_posts/postpage.html', context)
