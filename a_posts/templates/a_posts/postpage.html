@@ -110,7 +110,7 @@
             </article-buttons>
             <article-url x-data="{ copyLink() { navigator.clipboard.writeText($refs.urlLink.innerText); } }" class="mx-8 flex items-center bg-neutral-100 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-800 text-sm">
                 <span x-ref="urlLink" class="grow px-4 py-2 text-neutral-500 dark:text-neutral-400 truncate">
-                    {{ request.scheme }}://{{ request.get_host }}{% url 'post_page' post.id %}
+                    {{ request.scheme }}://{{ request.get_host }}{% url 'post_page' post.uuid %}
                 </span>
                 <button @click="copyLink" class="shrink-0 px-4 py-2 font-bold hover:bg-neutral-50 dark:hover:bg-neutral-900 active:bg-neutral-200 dark:active:bg-black transition-colors">
                     คัดลอกลิ้งค์

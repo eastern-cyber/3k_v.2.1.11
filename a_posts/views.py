@@ -66,7 +66,7 @@ def post_page_view(request, pk=None):
     if not pk:
         return redirect('home')
     
-    post = get_object_or_404(Post, id=pk)
+    post = get_object_or_404(Post, uuid=pk)
     
     context = {
                 'post': post,
