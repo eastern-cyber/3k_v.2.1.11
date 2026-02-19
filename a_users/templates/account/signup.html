@@ -110,9 +110,22 @@
                 </password-two>
                 
                 <verification-code class="flex">
-                    <input x-model="code" name="code" type="text" placeholder="ใส่รหัส 6 หลักที่ได้รับทางอีเมล" class="input-field !w-2/3 !rounded-none !rounded-l-sm" value="">  
-                    <div class="input-field !w-1/3 text-center font-medium text-neutral-400 select-none cursor-not-allowed !rounded-none !rounded-r-sm">ยืนยันรหัส</div>
+                    <input x-model="code" name="code" type="text" placeholder="ใส่รหัสยืนยัน 6 หลัก" class="input-field !w-2/3 !rounded-none !rounded-l-sm" value="">
+                    <button type="button"
+                            hx-get="{% url 'verification_code' %}"
+                            hx-include="inptut[name='email']"
+                            hx-target="#code-message"
+                            hx-swap="innerHTML"
+                            class="input-field !w-1/3 text-center font-medium text-neutral-400 select-none !rounded-none !rounded-r-sm"
+                            x-bind:class="email ? 'cursor-pointer !bg-rose-500 !text-neutral-900 hover:!bg-rose-700 hover:!text-neutral-100' : '!cursor-not-allowed'">
+                        รับรหัส
+                    </button>
                 </verification-code>
+                <div id="code-message" class="text-sm pb-3">
+                    {% if form.code.errors %}
+                        {{ form.code.errors }}
+                    {% endif %}
+                </div>
             </div>
 
             <div class="mb-4">

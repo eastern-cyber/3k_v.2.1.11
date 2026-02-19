@@ -1,8 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.db.models import Count
-from .forms import ProfileForm
+from django.core.validators import validate_email
+import random
+import threading
+from django.core.cache import cache
+from django.core.mail import EmailMessage
+from allauth.account.models import EmailAddress
+from .forms import ProfileForm, EmailForm
+
 
 User = get_user_model()
 
@@ -37,6 +45,33 @@ def profile_view(request, username=None):
         return render(request, 'a_users/partials/_profile.html', context)
     return render(request, 'a_users/profile.html', context)
 
+def verification_code(request):
+    email = request.GET.get("email")
+    if not email:
+        return HttpResponse('<p class="error">กรุณากรอกอีเมลของท่าน</p>')
+    
+    try:
+        validate_email(email)
+    except:
+        return HttpResponse('<p class="error">อีเมลไม่ถูกต้อง</p>')
+    
+    code = str(random.randint(100000, 999999))
+    cache.set(f"verification_code_{email}", code, timeout=300)
+    subject = "DProject KTDFI รหัสยืนยันอีเมล 6 หลัก เพื่อลงทะเบียนใช้งาน KokKokKok Application"
+    message = f"ใช้รหัสนี้เพื่อการลงทะเบียน: {code} รหัสจะหมดอายุใน 5 นาที"
+    sender = "no-reply@dfi.fund"
+    recipients = [email]
+    
+    email_thread = threading.Thread(target=send_email_async, args=(subject, message, sender, recipients))
+    email_thread.start()
+       
+    return HttpResponse('<p class="success">ระบบได้ดำเนินการส่ง <b><u>รหัสยืนยัน</u></b> ไปยังอีเมลของท่านแล้ว! กรุณาตรวจสอบอีเมลที่ท่านใช้ในการลงทะเบียน และ นำรหัสยืนยัน 6 หลัก กลับมาใส่ในช่องด้านบนนี้</p>')
+
+
+def send_email_async(subject, message, sender, recipients):
+    email = EmailMessage(subject, message, sender, recipients)
+    email.send()
+    
 @login_required
 def profile_edit(request):
     form = ProfileForm(instance=request.user)
@@ -54,6 +89,25 @@ def profile_edit(request):
 
 @login_required
 def settings_view(request):
+    form = EmailForm(instance=request.user)
+    
+    if request.GET.get('email'):
+        return render(request, 'a_users/partials/_settings_email.html', {'form':form})
+    
+    if request.POST.get("email"):
+        form = EmailForm(request.POST, instance=request.user)
+        current_email = request.user.email
+        
+        if form.is_valid():
+            new_email = form.cleaned_data['email']
+            if new_email != current_email:
+                form.save()
+                email_obj = EmailAddress.objects.get(user=request.user, primary=True)
+                email_obj.email = new_email
+                email_obj.verified = False
+                email_obj.save()
+                return redirect('settings')
+    
     if request.htmx:
-        return render(request, "a_users/partials/_settings.html")
-    return render(request, "a_users/settings.html")
+        return render(request, "a_users/partials/_settings.html", {'form':form})
+    return render(request, "a_users/settings.html", {'form':form})

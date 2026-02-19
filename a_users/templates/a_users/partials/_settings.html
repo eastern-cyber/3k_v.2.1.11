@@ -13,8 +13,11 @@
         {% endif %}
     </div>
     <div class="w-18 md:!w-27 ml-auto">
-        <button class="font-medium text-sky-600 hover:underline hover:text-cyan-800">
-            เปลี่ยน
+        <button hx-get="{% url 'settings' %}?email=true"
+                hx-target="#email_block"
+                hx-swap="innerHTML"
+                class="font-medium text-sky-600 hover:underline hover:text-cyan-800">
+                เปลี่ยน
         </button>
     </div>
 </div>

@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from a_posts.views import *
-from a_users.views import profile_view, index_view
+from a_users.views import profile_view, index_view, verification_code
 
 urlpatterns = [
     path('', home_view, name="home"),
@@ -30,6 +30,7 @@ urlpatterns = [
     path('explore/', explore_view, name="explore"),
     path('upload/', upload_view, name="upload"),
     path('post/', include("a_posts.urls")),
+    path('verification_code/', verification_code, name='verification_code'),
     path('profile/', include("a_users.urls")),
 ]
 
